@@ -4,8 +4,19 @@ export interface FlashCardType {
     back: string;
 }
 
-export interface Quiz {
+export interface QuizType {
     question: string;
     options: string[4];
     answer: number
 }
+
+export type FeedResponse = {
+    batchNumber: number;
+    cards: FlashCardType[];
+    quizzes: QuizType[];
+};
+
+export type FeedRequest = {
+    notes: string;
+    batchNumber: number;
+};

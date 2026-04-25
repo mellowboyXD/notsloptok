@@ -1,4 +1,6 @@
-export async function fetchFeed(notes: string) {
+import { FeedResponse } from "./types";
+
+export async function fetchFeed(notes: string): Promise<FeedResponse> {
     try {
         const res = await fetch("/api/generate-cards", {
             method: "POST",
@@ -8,7 +10,7 @@ export async function fetchFeed(notes: string) {
             body: JSON.stringify({ notes }),
         });
 
-        const data = await res.json();
+        const data: Promise<FeedResponse> = await res.json();
         console.log(data);
         return data;
     } catch (err) {
