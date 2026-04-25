@@ -10,6 +10,7 @@ import { HouseIcon, HouseSimpleIcon, UserCircleIcon } from "@phosphor-icons/reac
 import { PlusIcon } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { useState } from "react";
+import VerticalFeed from "@/components/ui/vertical-feed";
 
 export default function Page() {
   const [notes, setNotes] = useState("");
@@ -20,7 +21,11 @@ export default function Page() {
                     <h1 className="text-3xl font-bold">Upload Your Notes</h1>
                 </div>
                 <div className="flex-1 w-full flex items-center justify-center p-5">
-                    <UploadCard />
+                    {notes ? (
+                      <VerticalFeed notes={notes} />
+                    ) : (
+                      <UploadCard onTextExtracted={setNotes} />
+                    )}
                 </div>
                 <div className="flex w-full justify-center gap-16 items-center text-4xl">
                     <HomeButton />

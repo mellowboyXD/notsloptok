@@ -5,11 +5,17 @@ export async function fetchFeed(body: {notes: string, batchNumber: number}) {
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ body }),
+            body: JSON.stringify(body),
         });
 
         const data = await res.json();
         console.log(data);
+
+        if (!res.ok)
+        {
+            throw new Error(data.error ?? "could not fetch");
+        }
+
         return data;
     } catch (err) {
         console.error(err);
