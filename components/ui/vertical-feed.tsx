@@ -1,9 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FlashCardType } from "@/lib/types";
 import FlashCard from "./FlashCard";
+import useMutation from "@/hooks/useMutation";
+import { fetchFeed } from "@/lib/fetchFeed";
 
 // mock
-const data: FlashCardType[] = [
+const mockData: FlashCardType[] = [
     {
         front: "Test",
         back: "back"
@@ -19,9 +21,15 @@ export default function VerticalFeed() {
     const [lastTop, setLastTop] = useState(0);
     const scrollBox = useRef<HTMLDivElement | null>(null);
 
+    const { data, error, execute, isLoading } = useMutation(fetchFeed);
+
     useEffect(() => {
-        console.log(currentIndex);
-    }, [currentIndex])
+        const f = async () => {
+            await execute("statistics");
+            console.log(data);
+        }
+        f();
+    }, [])
 
     const handleScroll = () => {
         console.log(scrollBox.current?.scrollTop, lastTop);
@@ -47,7 +55,7 @@ export default function VerticalFeed() {
                 snap-mandatory"
                 onScrollEnd={() => handleScroll()}
             >
-                {data.map((content, idx) => (
+                {mockData.map((content, idx) => (
                     <div key={idx}
                         className="
                         px-2
