@@ -8,7 +8,7 @@ export async function fetchFeed(body: {notes: string, batchNumber: number}) {
             body: JSON.stringify(body),
         });
 
-        const data = await res.json();
+        const data: Promise<FeedResponse> = await res.json();
         console.log(data);
 
         if (!res.ok)

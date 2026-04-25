@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 
-export default function useMutation<T>(mutationCallback: (data: T) => Promise<T> | Promise<boolean>) {
+export default function useMutation<T>(mutationCallback: (data: T | string | any) => Promise<T> | Promise<boolean>) {
     const [data, setData] = useState<T | boolean | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const execute = async (body: T) => {
+    const execute = async (body: T | string | any) => {
         setIsLoading(true);
 
         try {

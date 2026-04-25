@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { FlashCardType } from "@/lib/types";
+import { FeedResponse, FlashCardType, QuizType } from "@/lib/types";
 import FlashCard from "./FlashCard";
 import useMutation from "@/hooks/useMutation";
 import { fetchFeed } from "@/lib/fetchFeed";
@@ -34,7 +34,7 @@ export default function VerticalFeed( { notes }: VerticalFeedProps ) {
 
     const scrollBox = useRef<HTMLDivElement | null>(null);
 
-    const { data, error, execute, isLoading } = useMutation(fetchFeed as any);
+    const { data, error, execute, isLoading } = useMutation<FeedResponse>(fetchFeed);
 
     useEffect(() => {
         const fetch = async () => {
@@ -59,44 +59,58 @@ export default function VerticalFeed( { notes }: VerticalFeedProps ) {
         }
     }
 
-    const feedData = data as FeedResponse | null;
+    const renderContent = () => {
+        if (error) return (
+            <Card className="flex h-full bg-red-500 p-6 items-center justify-center">
+                <p className="flex gap-2 font-bold">
+                    <InfoIcon className="font-bold text-2xl" />
+                    An error occurred on our side. We strongly apologize for that.
+                </p>
+            </Card>
+        );
+
+        if (isLoading) return (
+            <div className="flex h-full">
+                <Loading />
+            </div>
+        );
+
+        if (!data || typeof data === "boolean") return null;
+
+        return (
+            <>
+                {data.cards.map((content, idx) => (
+                    <div
+                        key={idx}
+                        className="px-2 py-10 w-full h-[550px] shrink-0 snap-start flex items-center justify-center"
+                    >
+                        <FlashCard id={idx} flashcard={content} />
+                    </div>
+                ))}
+
+                {data.quizzes.map((quiz, idx) => (
+                    <div key={idx}>
+                        {quiz.question}
+                    </div>
+                ))}
+            </>
+        );
+    };
 
     return (
         <React.Fragment>
             <div ref={scrollBox}
                 className="
-                w-full h-full 
+                w-full h-[550px]
                 scrollbar-hide 
                 overflow-y-scroll 
                 snap-y 
                 snap-always 
-                snap-mandatory"
+                snap-mandatory
+                "
                 onScrollEnd={() => handleScroll()}
             >
-                {error ?
-                    <Card className="flex h-full bg-red-500 p-6 items-center justify-center">
-                        <p className="flex gap-2 font-bold"><InfoIcon className="font-bold text-2xl" /> An error occured on our side. We strongly apologize for that.</p>
-                    </Card>
-                    : isLoading ?
-                        <div className="flex h-full">
-                            <Loading />
-                        </div>
-                        : (feedData?.cards ?? []).map((content, idx) => (
-                            <div key={idx}
-                                className="
-                        px-2
-                        py-5 
-                        w-full 
-                        snap-always 
-                        snap-mandatory 
-                        snap-start 
-                        h-full 
-                        flex 
-                        items-center 
-                        justify-center">
-                                <FlashCard id={idx} flashcard={content} />
-                            </div>
-                        ))}
+                {renderContent()}
             </div>
         </React.Fragment>
     );
