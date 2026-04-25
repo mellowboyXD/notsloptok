@@ -44,6 +44,7 @@ export default function VerticalFeed( { notes }: VerticalFeedProps ) {
                 notes,
                 batchNumber: 1,
             });
+            console.log("notes received by feed:", notes);
         }
         fetch();
     }, [])
