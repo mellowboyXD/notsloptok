@@ -1,49 +1,78 @@
-'use client';
-
-import React, { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "./card";
+import { QuizType } from "@/lib/types";
+import React, { Ref, useEffect, useState } from "react";
+import { Card, CardContent } from "./card";
 import { Button } from "./button";
 
 interface QuizCardProps {
-    quiz: {
-        question: string;
-        options: string[];
-        answer: number;
+    quiz: QuizType;
+    ref?: Ref<HTMLDivElement>;
+    incrementCorrectCount: () => void
+};
+
+export default function QuizCard(props: QuizCardProps) {
+    const quiz = props.quiz;
+
+    const [isAnswered, setIsAnswered] = useState(false);
+    const [answer, setAnswer] = useState(-1);
+
+    const handleClick = (i: number) => {
+        setAnswer(i);
+        if (quiz.answer === i)
+            props.incrementCorrectCount();
     };
-}
 
-export default function QuizCard({ quiz }: QuizCardProps) {
-    const [selected, setSelected] = useState<number | null>(null);
-    const [showAnswer, setShowAnswer] = useState(false);
+    useEffect(() => {
+        if (answer !== -1)
+            setIsAnswered(true);
+    }, [answer])
 
-    const handleSelect = (index: number) => {
-        setSelected(index);
-        setShowAnswer(true);
+    const renderUnanswered = () => {
+        return (
+            <div className="flex flex-col gap-4">
+                {quiz.options.map((q, i) => (
+                    <Button className="flex flex-wrap" key={i} onClick={() => handleClick(i)}>{q}</Button>
+                ))}
+            </div>
+        );
+    };
+
+    const renderAnswered = (ans: number) => {
+        const renderBtn = (msg: string, i: number) => {
+            if (i === ans && ans !== quiz.answer) {
+                return (
+                    <Button key={i} className="bg-red-500 pointer-events-none flex flex-wrap" > {msg}</Button>
+                );
+            }
+
+            if (i === quiz.answer) {
+                return (
+                    <Button key={i} className="bg-green-500 pointer-events-none flex flex-wrap">{msg}</Button>
+                );
+            } else {
+                return (
+                    <Button className="pointer-events-none flex flex-wrap" key={i} variant="outline">{msg}</Button>
+                );
+            }
+
+        };
+
+        return (
+            <div className="flex flex-col gap-4">
+                {quiz.options.map((opt, i) => (
+                    renderBtn(opt, i)
+                ))}
+            </div>
+        );
     };
 
     return (
-        <Card className="w-full max-w-md mx-auto">
-            <CardHeader>
-                <CardTitle className="text-lg">{quiz.question}</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-                {quiz.options.map((option, idx) => (
-                    <Button
-                        key={idx}
-                        variant={selected === idx ? "default" : "outline"}
-                        className="w-full justify-start"
-                        onClick={() => handleSelect(idx)}
-                        disabled={showAnswer}
-                    >
-                        {option}
-                    </Button>
-                ))}
-                {showAnswer && (
-                    <p className={`mt-4 text-sm ${selected === quiz.answer ? "text-green-600" : "text-red-600"}`}>
-                        {selected === quiz.answer ? "Correct!" : `Incorrect. The answer is: ${quiz.options[quiz.answer]}`}
-                    </p>
-                )}
-            </CardContent>
-        </Card>
+        <React.Fragment>
+            <Card ref={props.ref}>
+                <CardContent className="flex flex-col gap-6">
+                    <p>{quiz.question}</p>
+                    {!isAnswered ? renderUnanswered() : renderAnswered(answer)}
+                </CardContent>
+            </Card>
+        </React.Fragment>
     );
 }

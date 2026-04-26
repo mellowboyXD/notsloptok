@@ -1,10 +1,11 @@
-'use client';
+"use client";
 
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader } from "./card";
 import { Button } from "./button";
 import Dropzone from "react-dropzone";
 import { FileIcon } from "@phosphor-icons/react/dist/ssr";
+import { useParsePdf } from "@/hooks/useParsePdf";
 
 enum State {
     UPLOAD,
@@ -19,6 +20,7 @@ export default function UploadCard({ onTextExtracted }: UploadCardProps) {
     const [currentState, setCurrentState] = useState(State.UPLOAD);
     const [uploadedFiles, setUploadedFiles] = useState(Array<File>());
     const [rawText, setRawText] = useState("");
+    const { parsePdf, text, isLoading, error } = useParsePdf();
 
     const handleChangeState = (state: State) => {
         setCurrentState(state);
@@ -39,7 +41,7 @@ export default function UploadCard({ onTextExtracted }: UploadCardProps) {
         setRawText(newText);
         onTextExtracted(newText);
 
-        console.log("Extracted raw text:", combinedText);
+        //console.log("Extracted raw text:", combinedText);
 
         //change state
         setCurrentState(State.RECENTS);
@@ -48,6 +50,13 @@ export default function UploadCard({ onTextExtracted }: UploadCardProps) {
     const extractTextFromFile = async (file: File): Promise<string> => {
         if (file.type === "text/plain" || file.name.endsWith(".txt")) {
             return await file.text();
+        }
+
+        if (file.type === "application/pdf" || file.name.endsWith(".pdf")) {
+            const text = await parsePdf(file);
+            if (text) {
+                return text;
+            }
         }
 
         return `Unsupported file type: ${file.name}`;
@@ -103,8 +112,8 @@ export default function UploadCard({ onTextExtracted }: UploadCardProps) {
                         <ul className="flex flex-col gap-5">
                             {uploadedFiles.length <= 0 ?
                                 <>Upload files</>
-                                : uploadedFiles.map((file) => (
-                                    <li key={file.name} className="flex gap-2 items-center justify-between">
+                                : uploadedFiles.map((file, i) => (
+                                    <li key={file.name + file.lastModified + i} className="flex gap-2 items-center justify-between">
                                         <FileIcon className="text-xl" />
                                         <span className="w-50">{file.name}</span>
                                         <span>{Math.round(file.size / (1024))} KB</span>
@@ -115,7 +124,7 @@ export default function UploadCard({ onTextExtracted }: UploadCardProps) {
 
                     {rawText && (
                         <pre className="mt-4 max-h-40 overflow-y-auto text-xs whitespace-pre-wrap">
-                            {rawText}
+                            extraction successfull
                         </pre>)}
                 </CardContent>
             </Card>
