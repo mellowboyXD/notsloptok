@@ -137,3 +137,27 @@ export default function VerticalFeed({ notes }: VerticalFeedProps) {
         </React.Fragment >
     );
 }
+
+
+
+/*return (
+            <>
+                {/*batches.cards.map((content, idx) => (
+                    <div
+                        key={idx}
+                        className="px-2 py-10 w-full h-[550px] shrink-0 snap-start flex items-center justify-center"
+                    >
+                        <FlashCard id={idx} flashcard={content} />
+                    </div>
+                ))}
+
+                {data.quizzes.map((quiz, idx) => (
+                    <div
+                        key={`quiz-${idx}`}
+                        className="px-2 py-10 w-full h-[550px] shrink-0 snap-start flex items-center justify-center"
+                    >
+                        <QuizCard quiz={quiz} />
+                    </div>
+                ))}
+            </>
+        );*/
