@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Card, CardContent, CardHeader } from "./card";
 import { Button } from "./button";
 import Dropzone from "react-dropzone";

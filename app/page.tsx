@@ -5,18 +5,27 @@ import HomeButton from "@/components/ui/home-button";
 import { TiktokFrame } from "@/components/ui/tiktokframe"
 import UploadButton from "@/components/ui/upload-button";
 import UploadCard from "@/components/ui/upload-card"
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import VerticalFeed from "@/components/ui/vertical-feed";
 import { UserCircleIcon } from "@phosphor-icons/react";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 
 export default function Page() {
     const [notes, setNotes] = useState("");
+    const [isUploaded, setIsUploaded] = useState(false);
     const [notesData, setNotesData, deleteNotesData] = useLocalStorage("notes", "");
+
+    const homeBtnRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
         setNotesData(notes);
+        setIsUploaded(true);
     }, [notes])
+
+    useEffect(() => {
+        if (isUploaded)
+            homeBtnRef.current?.classList.add("animate-ping");
+    }, [isUploaded])
 
     return (
         <Container className={`animated-gradient`}>
@@ -32,7 +41,9 @@ export default function Page() {
                     <UploadCard onTextExtracted={setNotes} />
                 </div>
                 <div className="flex w-full justify-center gap-16 items-center text-4xl">
-                    <HomeButton />
+                    <div ref={homeBtnRef}>
+                        <HomeButton />
+                    </div>
                     <UploadButton />
                     <UserCircleIcon />
                 </div>

@@ -23,6 +23,7 @@ type FeedItem =
 export default function VerticalFeed({ notes }: VerticalFeedProps) {
     const [mounted, setMounted] = useState(false);
     const [correctCount, setCorrectCount] = useState(0);
+    const [quizCount, setQuizCount] = useState(0);
     const [batchNumber, setBatchNumber] = useState(1);
 
     const [feed, setFeed] = useState<FeedItem[]>([]);
@@ -33,6 +34,8 @@ export default function VerticalFeed({ notes }: VerticalFeedProps) {
     const fetchBatch = async (batch: number) => {
         await execute({ notes, batchNumber: batch });
         setInitialLoading(false);
+        setBatchNumber(batchNumber + 1);
+        console.log("finished fetching")
     };
 
     // initial fetch
@@ -66,7 +69,7 @@ export default function VerticalFeed({ notes }: VerticalFeedProps) {
             const max = Math.max(cards.length, quizzes.length);
             for (let i = 0; i < max; i++) {
                 if (cards[i]) newItems.push(cards[i]);
-                if (cards[i + 1]) newItems.push(cards[i + 1]);
+                //if (cards[i + 1]) newItems.push(cards[i + 1]);
                 if (quizzes[i]) newItems.push(quizzes[i]);
             }
 
@@ -79,6 +82,7 @@ export default function VerticalFeed({ notes }: VerticalFeedProps) {
     }, [data, mounted]);
 
     const incrementCorrect = () => setCorrectCount(c => c + 1);
+    const incrementQuizCount = () => setQuizCount(c => c + 1);
 
     const handleLoadMore = () => {
         console.log("fetching more...")
@@ -124,10 +128,11 @@ export default function VerticalFeed({ notes }: VerticalFeedProps) {
                                     <QuizCard
                                         quiz={item.content}
                                         incrementCorrectCount={incrementCorrect}
+                                        incrementQuizCount={incrementQuizCount}
                                     />
                                 )}
                                 {item.type === "result" && (
-                                    <QuizResultSummary correctCount={correctCount} size={feed.filter(f => f.type === "quiz").length} />
+                                    <QuizResultSummary correctCount={correctCount} size={quizCount} />
                                 )}
                             </div>
                         ))}
@@ -138,26 +143,3 @@ export default function VerticalFeed({ notes }: VerticalFeedProps) {
     );
 }
 
-
-
-/*return (
-            <>
-                {/*batches.cards.map((content, idx) => (
-                    <div
-                        key={idx}
-                        className="px-2 py-10 w-full h-[550px] shrink-0 snap-start flex items-center justify-center"
-                    >
-                        <FlashCard id={idx} flashcard={content} />
-                    </div>
-                ))}
-
-                {data.quizzes.map((quiz, idx) => (
-                    <div
-                        key={`quiz-${idx}`}
-                        className="px-2 py-10 w-full h-[550px] shrink-0 snap-start flex items-center justify-center"
-                    >
-                        <QuizCard quiz={quiz} />
-                    </div>
-                ))}
-            </>
-        );*/

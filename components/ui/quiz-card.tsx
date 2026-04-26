@@ -6,7 +6,8 @@ import { Button } from "./button";
 interface QuizCardProps {
     quiz: QuizType;
     ref?: Ref<HTMLDivElement>;
-    incrementCorrectCount: () => void
+    incrementCorrectCount: () => void;
+    incrementQuizCount: () => void;
 };
 
 export default function QuizCard(props: QuizCardProps) {
@@ -17,6 +18,7 @@ export default function QuizCard(props: QuizCardProps) {
 
     const handleClick = (i: number) => {
         setAnswer(i);
+        props.incrementQuizCount();
         if (quiz.answer === i)
             props.incrementCorrectCount();
     };
@@ -30,8 +32,8 @@ export default function QuizCard(props: QuizCardProps) {
         return (
             <div className="flex flex-col gap-4">
                 {quiz.options.map((q, i) => (
-                    <div className="flex flex-wrap w-full">
-                        <Button className="h-auto w-full py-2 whitespace-normal break-words" key={i} onClick={() => handleClick(i)}>{q}</Button>
+                    <div key={i} className="flex flex-wrap w-full">
+                        <Button className="h-auto w-full py-2 whitespace-normal break-words" onClick={() => handleClick(i)}>{q}</Button>
                     </div>
                 ))}
             </div>

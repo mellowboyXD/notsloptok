@@ -171,3 +171,20 @@
   /* Hide scrollbar for IE and Edge */
   -ms-overflow-style: none;
 }
+
+.glow-btn {
+  width: 100px;
+  height: 100px;
+  background: #333;
+  /* Simple pulse animation: 1.5s duration, infinite loop, alternates direction */
+  animation: pulse 1.5s infinite alternate;
+}
+
+@keyframes pulse {
+  from {
+    box-shadow: 0 0 10px #0066cc;
+  }
+  to {
+    box-shadow: 0 0 20px 5px #0066cc;
+  }
+}
