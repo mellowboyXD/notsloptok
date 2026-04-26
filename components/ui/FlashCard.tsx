@@ -2,13 +2,14 @@
 
 import { FlashCardType } from "@/lib/types";
 import { Card, CardContent } from "./card";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 interface FlashCardProps {
     id: number;
     flashcard: FlashCardType;
     descriptionTitle?: string;
     description?: string;
+    ref?: React.Ref<HTMLDivElement>;
 }
 
 export default function FlashCard(props: FlashCardProps) {
@@ -31,6 +32,7 @@ export default function FlashCard(props: FlashCardProps) {
 
     return (
         <div
+            ref={props.ref}
             onClick={handleTap}
             className="w-full h-full cursor-pointer flex flex-col"
             style={{ perspective: "1000px" }}

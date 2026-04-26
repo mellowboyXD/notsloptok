@@ -1,10 +1,11 @@
 import { QuizType } from "@/lib/types";
-import React, { useEffect, useState } from "react";
+import React, { Ref, useEffect, useState } from "react";
 import { Card, CardContent } from "./card";
 import { Button } from "./button";
 
 interface QuizCardProps {
     quiz: QuizType;
+    ref?: Ref<HTMLDivElement>;
     incrementCorrectCount: () => void
 };
 
@@ -29,7 +30,7 @@ export default function QuizCard(props: QuizCardProps) {
         return (
             <div className="flex flex-col gap-4">
                 {quiz.options.map((q, i) => (
-                    <Button key={i} onClick={() => handleClick(i)}>{q}</Button>
+                    <Button className="flex flex-wrap" key={i} onClick={() => handleClick(i)}>{q}</Button>
                 ))}
             </div>
         );
@@ -37,21 +38,22 @@ export default function QuizCard(props: QuizCardProps) {
 
     const renderAnswered = (ans: number) => {
         const renderBtn = (msg: string, i: number) => {
-            if (i === ans) {
-                if (ans === quiz.answer) {
-                    return (
-                        <Button key={i} className="bg-green-500 pointer-events-none">{msg}</Button>
-                    );
-                } else {
-                    return (
-                        <Button key={i} className="bg-red-500 pointer-events-none">{msg}</Button>
-                    );
-                }
-            } else {
+            if (i === ans && ans !== quiz.answer) {
                 return (
-                    <Button className="pointer-events-none" key={i} variant="outline">{msg}</Button>
+                    <Button key={i} className="bg-red-500 pointer-events-none flex flex-wrap" > {msg}</Button>
                 );
             }
+
+            if (i === quiz.answer) {
+                return (
+                    <Button key={i} className="bg-green-500 pointer-events-none flex flex-wrap">{msg}</Button>
+                );
+            } else {
+                return (
+                    <Button className="pointer-events-none flex flex-wrap" key={i} variant="outline">{msg}</Button>
+                );
+            }
+
         };
 
         return (
@@ -65,7 +67,7 @@ export default function QuizCard(props: QuizCardProps) {
 
     return (
         <React.Fragment>
-            <Card>
+            <Card ref={props.ref}>
                 <CardContent className="flex flex-col gap-6">
                     <p>{quiz.question}</p>
                     {!isAnswered ? renderUnanswered() : renderAnswered(answer)}
